@@ -51,7 +51,7 @@ public class PerlinNoise : MonoBehaviour
         {
             VisualizeGrid();
         }
-        //CombineCubes();
+        CombineCubes();
     }
 
     private void VisualizeGrid()
@@ -114,11 +114,12 @@ public class PerlinNoise : MonoBehaviour
             combine[i].mesh = meshFilters[i].sharedMesh;
             combine[i].transform = meshFilters[i].transform.localToWorldMatrix;
             Destroy(meshFilters[i].gameObject);
+            //meshFilters[i].gameObject.SetActive(false);
         }
         Mesh combinedMesh = new();
         combinedMesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
         visualizationParent.AddComponent<MeshFilter>().mesh = combinedMesh;
-        //visualizationParent.AddComponent<MeshRenderer>().material = visualizationCube.GetComponent<MeshRenderer>().material;
+        visualizationParent.AddComponent<MeshRenderer>().material = visualizationCube.GetComponent<MeshRenderer>().sharedMaterial;
         combinedMesh.CombineMeshes(combine);
 
     }
