@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using UnityEngine;
 using UnityEngine.TerrainUtils;
 using UnityEngine.UI;
@@ -22,12 +23,14 @@ public class PerlinNoise : MonoBehaviour
     public GameObject visualizationCube;
     public float visualizationHeightScale = 5f;
     public RawImage visualizationUI;
+    public GameObject visualizationParent;
 
     private Texture2D texture;
 
     private List<MeshFilter> meshFilters = new();
 
-    private GameObject visualizationParent;
+    private bool canGenerate = true;
+
     private void Awake() 
     {
         if(instance == null)
@@ -44,19 +47,40 @@ public class PerlinNoise : MonoBehaviour
     {
         //Generate();
     }
+
+    public void ClearVisualization()
+    {
+        Destroy(visualizationParent.gameObject);
+        visualizationParent = new GameObject("VisualizationParent");
+        visualizationParent.transform.parent = this.transform;
+        meshFilters.Clear();
+        canGenerate = true;
+    }
     public void Generate()
     {
-        GenerateNoise();
-        if(visualizeGrid)
+        if(canGenerate)
         {
-            VisualizeGrid();
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
+            GenerateNoise();
+            long elapsedMilliseconds = stopwatch.ElapsedMilliseconds;
+            UnityEngine.Debug.Log("Generation time: " + elapsedMilliseconds + " ms");
+            if(visualizeGrid)
+            {
+                VisualizeGrid();
+            }
+            CombineCubes();
+            canGenerate = false;
         }
-        CombineCubes();
+        else
+        {
+            UnityEngine.Debug.LogError("Clear generation first");
+        }
     }
 
     private void VisualizeGrid()
     {
-        visualizationParent = new GameObject("VisualizationParent");
+        //visualizationParent = new GameObject("VisualizationParent");
         visualizationParent.transform.SetParent(this.transform);
 
         for(int x = 0; x < gridStepSizeX; x++)

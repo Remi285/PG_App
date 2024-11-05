@@ -5,9 +5,13 @@ using UnityEngine;
 
 public class Generator : MonoBehaviour
 {
-    [SerializeField] private PerlinNoise perlinNoiseScript;
+    public PerlinNoise perlinNoiseScript;
     public void GeneratePerlin()
     {
         perlinNoiseScript.Generate();
+    }
+    public void ClearVisualization()
+    {
+        perlinNoiseScript.ClearVisualization();
     }
 }

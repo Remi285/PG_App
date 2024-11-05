@@ -14,5 +14,9 @@ public class GeneratorEditor : Editor
         {
             generator.GeneratePerlin();
         }
+        if(GUILayout.Button("Clear visualization"))
+        {
+            generator.ClearVisualization();
+        }
     }
 }
