@@ -42,7 +42,7 @@ public class PerlinNoise : MonoBehaviour
 
     private void Start() 
     {
-        Generate();
+        //Generate();
     }
     public void Generate()
     {
