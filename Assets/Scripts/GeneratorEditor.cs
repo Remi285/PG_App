@@ -14,6 +14,10 @@ public class GeneratorEditor : Editor
         {
             generator.GeneratePerlin();
         }
+        if(GUILayout.Button("Generate diamond square"))
+        {
+            generator.GenerateDiamonSquare();
+        }
         if(GUILayout.Button("Clear visualization"))
         {
             generator.ClearVisualization();

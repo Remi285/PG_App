@@ -29,7 +29,7 @@ public class PerlinNoise : MonoBehaviour
 
     private List<MeshFilter> meshFilters = new();
 
-    private bool canGenerate = true;
+
 
     private void Awake() 
     {
@@ -43,46 +43,29 @@ public class PerlinNoise : MonoBehaviour
         }
     }
 
-    private void Start() 
-    {
-        //Generate();
-    }
-
-    public void ClearVisualization()
+    public void ClearVisualization(Transform _transform)
     {
         Destroy(visualizationParent.gameObject);
         visualizationParent = new GameObject("VisualizationParent");
-        visualizationParent.transform.parent = this.transform;
+        visualizationParent.transform.parent = _transform;
         meshFilters.Clear();
-        canGenerate = true;
     }
     public void Generate()
     {
-        if(canGenerate)
+        Stopwatch stopwatch = new Stopwatch();
+        stopwatch.Start();
+        GenerateNoise();
+        long elapsedMilliseconds = stopwatch.ElapsedMilliseconds;
+        UnityEngine.Debug.Log("Generation time: " + elapsedMilliseconds + " ms");
+        if(visualizeGrid)
         {
-            Stopwatch stopwatch = new Stopwatch();
-            stopwatch.Start();
-            GenerateNoise();
-            long elapsedMilliseconds = stopwatch.ElapsedMilliseconds;
-            UnityEngine.Debug.Log("Generation time: " + elapsedMilliseconds + " ms");
-            if(visualizeGrid)
-            {
-                VisualizeGrid();
-            }
+            VisualizeGrid();
             CombineCubes();
-            canGenerate = false;
-        }
-        else
-        {
-            UnityEngine.Debug.LogError("Clear generation first");
         }
     }
 
     private void VisualizeGrid()
     {
-        //visualizationParent = new GameObject("VisualizationParent");
-        visualizationParent.transform.SetParent(this.transform);
-
         for(int x = 0; x < gridStepSizeX; x++)
         {
             for(int y = 0; y < gridStepSizeY; y++)
@@ -138,7 +121,6 @@ public class PerlinNoise : MonoBehaviour
             combine[i].mesh = meshFilters[i].sharedMesh;
             combine[i].transform = meshFilters[i].transform.localToWorldMatrix;
             Destroy(meshFilters[i].gameObject);
-            //meshFilters[i].gameObject.SetActive(false);
         }
         Mesh combinedMesh = new();
         combinedMesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
