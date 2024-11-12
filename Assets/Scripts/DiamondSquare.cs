@@ -2,6 +2,7 @@ using System.CodeDom.Compiler;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -11,20 +12,30 @@ public class DiamondSquare : MonoBehaviour
 {
     [SerializeField] private int sizePower;
     [SerializeField] private int size;
-    [SerializeField, Range(0, 1)] private float scale;
+    [SerializeField, Range(0, 1)] private float roughness;
+    private float saveRoughness;
     [SerializeField] private float heightScale = 1;
     private float[,] map;
     private int stepSize;
     [SerializeField] private GameObject visualizationCube;
+    [SerializeField] private GameObject visualizationParent;
+
+    private List<MeshFilter> meshFilters = new();
     public void Generate()
     {
+        saveRoughness = roughness;
+        Stopwatch stopwatch = new Stopwatch();
+        stopwatch.Start();
         GenerateDiamondSquare();
         CreateVisualization();
+        CombineCubes();
+        long elapsedMilliseconds = stopwatch.ElapsedMilliseconds;
+        UnityEngine.Debug.Log("Generation time: " + elapsedMilliseconds + " ms");
+        roughness = saveRoughness;
     }
     private void GenerateDiamondSquare()
     {
-        
-        size = (int)Mathf.Pow(2f, (float)sizePower) + 1; //2^n + 1
+        size = (int)Mathf.Pow(2f, (float)sizePower) + 1;
         map = new float[size, size];
         stepSize = size - 1;
         map[0, 0] = Random.Range(0f, 1f);
@@ -36,7 +47,7 @@ public class DiamondSquare : MonoBehaviour
             DiamondStep();
             SquareStep();
             stepSize /= 2;
-            scale /= 2;
+            roughness /= 2;
         }
     }
     private void DiamondStep()
@@ -45,10 +56,10 @@ public class DiamondSquare : MonoBehaviour
         {
             for(int y = 0; y < size - 1; y += stepSize)
             {
-                Debug.LogError("Diamond: " + x + " " + y);
-                float avg = (map[x, y] + map[x + stepSize, y] + map[x, y + stepSize] + map[x + stepSize, y + stepSize]) / 4f; // średnia
-                Debug.LogWarning("Diamond avg: " + avg);
-                map[x + stepSize / 2, y + stepSize / 2] = avg + Random.Range(-scale, scale);
+                float avg = (map[x, y] + map[x + stepSize, y] + 
+                map[x, y + stepSize] + map[x + stepSize, y + stepSize]) / 4f;
+                map[x + stepSize / 2, y + stepSize / 2] = avg + 
+                Random.Range(-roughness, roughness);
             }
         }
     }
@@ -58,18 +69,35 @@ public class DiamondSquare : MonoBehaviour
         {
             for (int y = (x + stepSize / 2) % stepSize; y < size - 1; y += stepSize)
             {
-                Debug.LogError("Square: " + x + " " + y);
-                float avg = (map[(x - stepSize / 2 + size - 1) % (size - 1), y] + map[(x + stepSize / 2) % (size - 1), y] + map[x, (y + stepSize / 2) % (size - 1)] + map[x, (y - stepSize / 2 + size - 1) % (size - 1)]) / 4f;
-                Debug.LogWarning("Square avg: " + avg);
-                avg = avg + Random.Range(-scale, scale);
-                map[x, y] = avg;
+                float sum = 0;
+                int count = 0;
 
-                if (x == 0) map[size - 1, y] = avg;
-                if (y == 0) map[x, size - 1] = avg;
+                if (x - stepSize / 2 >= 0)
+                {
+                    sum += map[x - stepSize / 2, y];
+                    count++;
+                }
+                if (x + stepSize / 2 <= size - 1)
+                {
+                    sum += map[x + stepSize / 2, y];
+                    count++;
+                }
+                if (y - stepSize / 2 >= 0)
+                {
+                    sum += map[x, y - stepSize / 2];
+                    count++;
+                }
+                if (y + stepSize / 2 <= size - 1)
+                {
+                    sum += map[x, y + stepSize / 2];
+                    count++;
+                }
+
+                map[x, y] = sum / count + Random.Range(-roughness, roughness);
             }
         }
     }
-    void CreateVisualization()
+    private void CreateVisualization()
     {
         for (int x = 0; x < size; x++)
         {
@@ -77,9 +105,33 @@ public class DiamondSquare : MonoBehaviour
             {
                 float height = map[x, y];
                 Vector3 position = new Vector3(x, height * heightScale, y);
-                GameObject terrainBlock = Instantiate(visualizationCube, position, Quaternion.identity);
-                //terrainBlock.transform.localScale = new Vector3(1, height * heightScale, 1);
+                GameObject clone = Instantiate(
+                    visualizationCube, position, Quaternion.identity);
+                clone.transform.SetParent(visualizationParent.transform);
+                meshFilters.Add(clone.GetComponent<MeshFilter>());
             }
         }
+    }
+    private void CombineCubes()
+    {
+        CombineInstance[] combine = new CombineInstance[meshFilters.Count];
+        for(int i = 0; i < meshFilters.Count; i++)
+        {
+            combine[i].mesh = meshFilters[i].sharedMesh;
+            combine[i].transform = meshFilters[i].transform.localToWorldMatrix;
+            Destroy(meshFilters[i].gameObject);
+        }
+        Mesh combinedMesh = new();
+        combinedMesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
+        visualizationParent.AddComponent<MeshFilter>().mesh = combinedMesh;
+        visualizationParent.AddComponent<MeshRenderer>().material = visualizationCube.GetComponent<MeshRenderer>().sharedMaterial;
+        combinedMesh.CombineMeshes(combine);
+    }
+
+    public void ClearVisualization()
+    {
+        Destroy(visualizationParent.GetComponent<MeshFilter>());
+        Destroy(visualizationParent.GetComponent<MeshRenderer>());
+        meshFilters.Clear();
     }
 }

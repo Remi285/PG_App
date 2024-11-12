@@ -17,13 +17,10 @@ public class PerlinNoise : MonoBehaviour
     public bool randomizeNoiseOffest;
     public Vector2 offset;
     public float noiseScale = 1f;
-    public int gridStepSizeX;
-    public int gridStepSizeY;
-    public bool visualizeGrid = false;
     public GameObject visualizationCube;
     public float visualizationHeightScale = 5f;
     public RawImage visualizationUI;
-    public GameObject visualizationParent;
+    [SerializeReference] private GameObject visualizationParent;
 
     private Texture2D texture;
 
@@ -43,47 +40,42 @@ public class PerlinNoise : MonoBehaviour
         }
     }
 
-    public void ClearVisualization(Transform _transform)
+    public void ClearVisualization()
     {
-        Destroy(visualizationParent.gameObject);
-        visualizationParent = new GameObject("VisualizationParent");
-        visualizationParent.transform.parent = _transform;
+        Destroy(visualizationParent.GetComponent<MeshFilter>());
+        Destroy(visualizationParent.GetComponent<MeshRenderer>());
         meshFilters.Clear();
     }
     public void Generate()
     {
+        
         Stopwatch stopwatch = new Stopwatch();
         stopwatch.Start();
         GenerateNoise();
+        VisualizeGrid();
+        CombineCubes();
         long elapsedMilliseconds = stopwatch.ElapsedMilliseconds;
         UnityEngine.Debug.Log("Generation time: " + elapsedMilliseconds + " ms");
-        if(visualizeGrid)
-        {
-            VisualizeGrid();
-            CombineCubes();
-        }
     }
 
     private void VisualizeGrid()
     {
-        for(int x = 0; x < gridStepSizeX; x++)
+        for(int x = 0; x < textureSizeX; x++)
         {
-            for(int y = 0; y < gridStepSizeY; y++)
+            for(int y = 0; y < textureSizeY; y++)
             {
-                GameObject clone = Instantiate(visualizationCube, new Vector3(x, SampleStepped(x, y) * visualizationHeightScale, y) + transform.position, transform.rotation);
+                GameObject clone = Instantiate(visualizationCube, 
+                new Vector3(x, SampleStep(x, y) * visualizationHeightScale, y) + 
+                transform.position, transform.rotation);
                 meshFilters.Add(clone.GetComponent<MeshFilter>());
                 clone.transform.SetParent(visualizationParent.transform);
             }
-        }
-        visualizationParent.transform.position = new Vector3(-gridStepSizeX * 0.5f, -visualizationHeightScale * 0.5f, -gridStepSizeY * 0.5f);
-        
+        }   
     }
 
-    private float SampleStepped(int x, int y)
+    private float SampleStep(int x, int y)
     {
-        int _gridStepSizeX = textureSizeX / gridStepSizeX;
-        int _gridStepSizeY = textureSizeY / gridStepSizeY;
-        float sampledFloat = texture.GetPixel(Mathf.FloorToInt(x * _gridStepSizeX), Mathf.FloorToInt(y * _gridStepSizeY)).grayscale;
+        float sampledFloat = texture.GetPixel(x, y).grayscale;
         return sampledFloat;
     }   
 
@@ -91,7 +83,8 @@ public class PerlinNoise : MonoBehaviour
     {
         if(randomizeNoiseOffest)
         {
-            offset = new Vector2(UnityEngine.Random.Range(0, 99999), UnityEngine.Random.Range(0, 99999));
+            offset = new Vector2(UnityEngine.Random.Range(0, 99999), 
+            UnityEngine.Random.Range(0, 99999));
         }
         texture = new Texture2D(textureSizeX, textureSizeY);
         for(int x = 0; x < textureSizeX; x++)
@@ -113,6 +106,7 @@ public class PerlinNoise : MonoBehaviour
         Color color = new Color(sample, sample, sample);
         return color;
     }
+    
     private void CombineCubes()
     {
         CombineInstance[] combine = new CombineInstance[meshFilters.Count];

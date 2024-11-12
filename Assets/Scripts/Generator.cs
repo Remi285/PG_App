@@ -49,7 +49,8 @@ public class Generator : MonoBehaviour
     }
     public void ClearVisualization()
     {
-        perlinNoiseScript.ClearVisualization(transform);
+        perlinNoiseScript.ClearVisualization();
+        diamondSquare.ClearVisualization();
         canGenerate = true;
     }
 }
