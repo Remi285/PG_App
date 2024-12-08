@@ -135,6 +135,7 @@ GameObject:
   - component: {fileID: 327238170}
   - component: {fileID: 327238169}
   - component: {fileID: 327238168}
+  - component: {fileID: 327238171}
   m_Layer: 0
   m_Name: Generate
   m_TagString: Untagged
@@ -172,7 +173,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   perlinNoiseScript: {fileID: 327238170}
   diamondSquare: {fileID: 327238169}
-  oneD: {fileID: 327238168}
+  voronoi: {fileID: 327238171}
 --- !u!114 &327238168
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -187,11 +188,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   length_x: 100
   length_y: 100
-  amplitude: 1
+  amplitude: 5
   scale: 10
   offset: 1
   visualizationCube: {fileID: 8639042997286656730, guid: 6baf8f1f0efd68941b978438ab3515f8, type: 3}
-  visualizationHeightScale: 5
+  visualizationHeightScale: 1
   visualizationParent: {fileID: 866266616}
 --- !u!114 &327238169
 MonoBehaviour:
@@ -231,6 +232,26 @@ MonoBehaviour:
   visualizationCube: {fileID: 8639042997286656730, guid: 6baf8f1f0efd68941b978438ab3515f8, type: 3}
   visualizationHeightScale: 30
   visualizationUI: {fileID: 1983536218}
+  visualizationParent: {fileID: 866266616}
+--- !u!114 &327238171
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 327238164}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c8a90dfe778baf34c873ec5369cd0ed2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  textureWidth: 100
+  textureHeight: 100
+  numCells: 100
+  normalizationPower: 1
+  rawImage: {fileID: 1983536218}
+  visualizationCube: {fileID: 8639042997286656730, guid: 6baf8f1f0efd68941b978438ab3515f8, type: 3}
+  visualizationHeightScale: 10
   visualizationParent: {fileID: 866266616}
 --- !u!1 &476954564
 GameObject:

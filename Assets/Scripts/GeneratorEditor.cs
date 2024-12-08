@@ -18,9 +18,13 @@ public class GeneratorEditor : Editor
         {
             generator.GenerateDiamonSquare();
         }
-        if(GUILayout.Button("Generate 1D"))
+        // if(GUILayout.Button("Generate 1D"))
+        // {
+        //     generator.Generate1D();
+        // }
+        if(GUILayout.Button("Generate Voronoi"))
         {
-            generator.Generate1D();
+            generator.GenerateVoronoi();
         }
         if(GUILayout.Button("Clear visualization"))
         {

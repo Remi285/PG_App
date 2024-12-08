@@ -25,9 +25,10 @@ public class OneD : MonoBehaviour
         offset = Random.Range(0, 99999f);
         var map = new float[length_x, length_y];
         var noise = Generate1DNoise(length_x, scale, amplitude, offset);
+        //VisualizeNoise(noise);
         map = GenerateTheRestOfTheMap(noise);
         VisualizeMap(map);
-        CombineCubes();
+        //CombineCubes();
     }
 
     private float[,] GenerateTheRestOfTheMap(float[] _noise)
@@ -88,7 +89,7 @@ public class OneD : MonoBehaviour
         {
             for(int y = 0; y < length_y; y++)
             {
-                GameObject clone = Instantiate(visualizationCube, new Vector3(x, _map[x, y] * visualizationHeightScale, 0) + transform.position, transform.rotation);
+                GameObject clone = Instantiate(visualizationCube, new Vector3(x, _map[x, y] * visualizationHeightScale, y) + transform.position, transform.rotation);
                 meshFilters.Add(clone.GetComponent<MeshFilter>());
                 clone.transform.SetParent(visualizationParent.transform);
             }
