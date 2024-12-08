@@ -18,6 +18,10 @@ public class GeneratorEditor : Editor
         {
             generator.GenerateDiamonSquare();
         }
+        if(GUILayout.Button("Generate 1D"))
+        {
+            generator.Generate1D();
+        }
         if(GUILayout.Button("Clear visualization"))
         {
             generator.ClearVisualization();

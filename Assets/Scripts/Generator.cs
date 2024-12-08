@@ -10,6 +10,7 @@ public class Generator : MonoBehaviour
     private bool canGenerate = true;
     public PerlinNoise perlinNoiseScript;
     public DiamondSquare diamondSquare;
+    public OneD oneD;
 
     private void Awake() 
     {
@@ -35,6 +36,20 @@ public class Generator : MonoBehaviour
         }
 
     }
+
+    public void Generate1D()
+    {
+        if(canGenerate)
+        {
+            oneD.Generate();
+            canGenerate = false;
+        }
+        else
+        {
+            Debug.LogError("Clear generation first");
+        }
+
+    }
     public void GeneratePerlin()
     {
         if(canGenerate)
@@ -51,6 +66,7 @@ public class Generator : MonoBehaviour
     {
         perlinNoiseScript.ClearVisualization();
         diamondSquare.ClearVisualization();
+        oneD.ClearVisualization();
         canGenerate = true;
     }
 }
