@@ -25,10 +25,10 @@ public class OneD : MonoBehaviour
         offset = Random.Range(0, 99999f);
         var map = new float[length_x, length_y];
         var noise = Generate1DNoise(length_x, scale, amplitude, offset);
-        //VisualizeNoise(noise);
-        map = GenerateTheRestOfTheMap(noise);
-        VisualizeMap(map);
-        //CombineCubes();
+        VisualizeNoise(noise);
+        // map = GenerateTheRestOfTheMap(noise);
+        // VisualizeMap(map);
+        CombineCubes();
     }
 
     private float[,] GenerateTheRestOfTheMap(float[] _noise)
@@ -60,15 +60,14 @@ public class OneD : MonoBehaviour
         return _new_noise;
     }
 
-    private float[] Generate1DNoise(int _length, float _scale, float _amplitude, float _offset) //do zmiany z perlina na inny
+    private float[] Generate1DNoise(int _length, float _scale, float _amplitude, float _offset)
     {
         float[] noise = new float[_length];
 
         for (int i = 0; i < _length; i++)
         {
             float x = i / _scale + _offset;
-
-            noise[i] = Mathf.PerlinNoise(x, 0) * _amplitude;
+            noise[i] = Mathf.PerlinNoise1D(x) * _amplitude;
         }
 
         return noise;

@@ -173,6 +173,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   perlinNoiseScript: {fileID: 327238170}
   diamondSquare: {fileID: 327238169}
+  oneD: {fileID: 327238168}
   voronoi: {fileID: 327238171}
 --- !u!114 &327238168
 MonoBehaviour:

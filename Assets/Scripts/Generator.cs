@@ -10,7 +10,7 @@ public class Generator : MonoBehaviour
     private bool canGenerate = true;
     public PerlinNoise perlinNoiseScript;
     public DiamondSquare diamondSquare;
-    //public OneD oneD;
+    public OneD oneD;
     public Voronoi voronoi;
 
     private void Awake() 
@@ -40,15 +40,15 @@ public class Generator : MonoBehaviour
 
     public void Generate1D()
     {
-        // if(canGenerate)
-        // {
-        //     oneD.Generate();
-        //     canGenerate = false;
-        // }
-        // else
-        // {
-        //     Debug.LogError("Clear generation first");
-        // }
+        if(canGenerate)
+        {
+            oneD.Generate();
+            canGenerate = false;
+        }
+        else
+        {
+            Debug.LogError("Clear generation first");
+        }
 
     }
     public void GeneratePerlin()
@@ -80,7 +80,7 @@ public class Generator : MonoBehaviour
     {
         perlinNoiseScript.ClearVisualization();
         diamondSquare.ClearVisualization();
-        //oneD.ClearVisualization();
+        oneD.ClearVisualization();
         voronoi.ClearVisualization();
         canGenerate = true;
     }
