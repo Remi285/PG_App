@@ -26,6 +26,9 @@ public class PerlinNoise : MonoBehaviour
 
     private List<MeshFilter> meshFilters = new();
 
+    public int octaves = 4;
+    public float lacunarity = 2f;
+    public float persistence = 0.5f;
 
 
     private void Awake() 
@@ -48,7 +51,6 @@ public class PerlinNoise : MonoBehaviour
     }
     public void Generate()
     {
-        
         Stopwatch stopwatch = new Stopwatch();
         stopwatch.Start();
         GenerateNoise();
@@ -100,10 +102,31 @@ public class PerlinNoise : MonoBehaviour
 
     private Color SampleNoise(int x, int y)
     {
-        float xCoord = (float)x / textureSizeX * noiseScale + offset.x;
-        float yCoord = (float)y / textureSizeY * noiseScale + offset.y;
-        float sample = Mathf.PerlinNoise(xCoord, yCoord);
-        Color color = new Color(sample, sample, sample);
+        Color color = new();
+        float amplitude = 1;
+        float frequency = 1;
+        float noiseHeight = 0;
+        for(int i = 0; i < octaves; i++)
+        {
+            float xCoord = (float)x / textureSizeX * noiseScale * frequency + offset.x;
+            float yCoord = (float)y / textureSizeY * noiseScale * frequency + offset.y;
+            float sample = Mathf.PerlinNoise(xCoord, yCoord) * 2 - 1; // zakres od -1 do 1
+            noiseHeight += sample * amplitude;
+            amplitude *= persistence;
+            frequency *= lacunarity;
+        }
+        float Remap(float value, float inMin, float inMax, float outMin, float outMax)
+        {
+            return (value - inMin) / (inMax - inMin) * (outMax - outMin) + outMin;
+        }
+
+        UnityEngine.Debug.Log("Before: " + noiseHeight);
+        noiseHeight = Remap(noiseHeight, -1f, 1f, 0f, 1f);
+        UnityEngine.Debug.Log("After: " + noiseHeight);
+        // UnityEngine.Debug.Log("Before: " + noiseHeight);
+        // noiseHeight = Mathf.InverseLerp(0, 1, noiseHeight);
+        // UnityEngine.Debug.Log("After: " + noiseHeight);
+        color = new Color(noiseHeight, noiseHeight, noiseHeight);
         return color;
     }
     

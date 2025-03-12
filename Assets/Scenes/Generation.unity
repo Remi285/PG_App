@@ -225,15 +225,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 682dc7694da022f44a06545fc6def542, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  textureSizeX: 257
-  textureSizeY: 257
+  textureSizeX: 255
+  textureSizeY: 255
   randomizeNoiseOffest: 1
   offset: {x: 1, y: 1}
   noiseScale: 5
   visualizationCube: {fileID: 8639042997286656730, guid: 6baf8f1f0efd68941b978438ab3515f8, type: 3}
-  visualizationHeightScale: 30
+  visualizationHeightScale: 20
   visualizationUI: {fileID: 1983536218}
   visualizationParent: {fileID: 866266616}
+  octaves: 4
+  lacunarity: 2
+  persistence: 1
 --- !u!114 &327238171
 MonoBehaviour:
   m_ObjectHideFlags: 0
