@@ -9,6 +9,8 @@ public class Voronoi : MonoBehaviour
     public int textureHeight = 256;
     public int numCells = 20;
 
+    public int maxHeight = 20;
+
     public float normalizationPower = 2f;
     public RawImage rawImage;
     public GameObject visualizationCube;
@@ -58,7 +60,7 @@ public class Voronoi : MonoBehaviour
                     if (distance < minDistance)
                         minDistance = distance;
                 }
-                float normalizedDistance = Mathf.InverseLerp(textureWidth / 2, 0, minDistance);
+                float normalizedDistance = Mathf.InverseLerp(maxHeight, 0, minDistance);
                 normalizedDistance = Mathf.Pow(normalizedDistance, normalizationPower);
                 
                 Color pixelColor = Color.Lerp(Color.black, Color.white, normalizedDistance);
@@ -66,7 +68,6 @@ public class Voronoi : MonoBehaviour
             }
         }
 
-        // Zastosowanie zmian w teksturze
         texture.Apply();
         return texture;
     }
@@ -77,9 +78,7 @@ public class Voronoi : MonoBehaviour
         {
             for(int y = 0; y < textureHeight; y++)
             {
-                GameObject clone = Instantiate(visualizationCube, 
-                new Vector3(x, SampleStep(x, y) * visualizationHeightScale, y) + 
-                transform.position, transform.rotation);
+                GameObject clone = Instantiate(visualizationCube, new Vector3(x, SampleStep(x, y) * visualizationHeightScale, y) + transform.position, transform.rotation);
                 meshFilters.Add(clone.GetComponent<MeshFilter>());
                 clone.transform.SetParent(visualizationParent.transform);
             }

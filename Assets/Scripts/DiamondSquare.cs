@@ -105,8 +105,7 @@ public class DiamondSquare : MonoBehaviour
             {
                 float height = map[x, y];
                 Vector3 position = new Vector3(x, height * heightScale, y);
-                GameObject clone = Instantiate(
-                    visualizationCube, position, Quaternion.identity);
+                GameObject clone = Instantiate(visualizationCube, position, Quaternion.identity);
                 clone.transform.SetParent(visualizationParent.transform);
                 meshFilters.Add(clone.GetComponent<MeshFilter>());
             }
