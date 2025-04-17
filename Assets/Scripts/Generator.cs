@@ -53,15 +53,17 @@ public class Generator : MonoBehaviour
     }
     public void GeneratePerlin()
     {
-        if(canGenerate)
-        {
-            perlinNoiseScript.Generate();
-            canGenerate = false;
-        }
-        else
-        {
-            Debug.LogError("Clear generation first");
-        }
+        perlinNoiseScript.Generate();
+
+        // if(canGenerate)
+        // {
+        //     perlinNoiseScript.Generate();
+        //     canGenerate = false;
+        // }
+        // else
+        // {
+        //     Debug.LogError("Clear generation first");
+        // }
     }
 
     public void GenerateVoronoi()

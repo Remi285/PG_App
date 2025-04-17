@@ -258,13 +258,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 682dc7694da022f44a06545fc6def542, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  textureSizeX: 100
-  textureSizeY: 100
+  textureSizeX: 200
+  textureSizeY: 200
   randomizeNoiseOffest: 1
   offset: {x: 75196, y: 32474}
-  noiseScale: 1
+  noiseScale: 2
   visualizationCube: {fileID: 8639042997286656730, guid: 6baf8f1f0efd68941b978438ab3515f8, type: 3}
-  visualizationHeightScale: 10
+  visualizationHeightScale: 30
   hightVisualizationUI: {fileID: 1983536218}
   regionVisualizationUI: {fileID: 392409671}
   visualizationParent: {fileID: 866266616}
@@ -273,11 +273,14 @@ MonoBehaviour:
     height: 0.2
     color: {r: 0.038105488, g: 0, b: 1, a: 1}
   - name: Grass
-    height: 0.7
+    height: 0.4
     color: {r: 0.108490594, g: 0.8490566, b: 0, a: 1}
   - name: Mountain
-    height: 1
+    height: 0.9
     color: {r: 0.5754717, g: 0.27839857, b: 0, a: 1}
+  - name: Snow
+    height: 1
+    color: {r: 1, g: 1, b: 1, a: 1}
   octaves: 4
   lacunarity: 2
   persistence: 0.5

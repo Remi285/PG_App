@@ -6,7 +6,7 @@ using UnityEngine;
 //Stworzony na podstawie https://youtu.be/4RpVBYW1r5M?si=e662YPWQocSmjBPd
 public class MeshGenerator : MonoBehaviour
 {
-    public static MeshData GenerateMesh(Texture2D heightMap)
+    public static MeshData GenerateMesh(Texture2D heightMap, float heightMultiplier)
     {
         int width = heightMap.width;
         int height = heightMap.height;
@@ -18,7 +18,7 @@ public class MeshGenerator : MonoBehaviour
         {
             for (int x = 0; x < width; x++)
             {
-                meshData.vertices[vertexIndex] = new Vector3(topLeftX + x, heightMap.GetPixel(x, y).grayscale, topLeftZ - y);
+                meshData.vertices[vertexIndex] = new Vector3(topLeftX + x, heightMap.GetPixel(x, y).grayscale * heightMultiplier, topLeftZ - y);
                 meshData.uvs[vertexIndex] = new Vector2((float)x / (width - 1), (float)y / (height - 1));
                 if(x <width - 1 && y < height - 1)
                 {

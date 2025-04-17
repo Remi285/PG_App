@@ -62,7 +62,7 @@ public class PerlinNoise : MonoBehaviour
         stopwatch.Start();
         GenerateNoise();
         MapDisplay mapDisplay = GetComponent<MapDisplay>();
-        mapDisplay.DrawMesh(MeshGenerator.GenerateMesh(texture), colorTexture);
+        mapDisplay.DrawMesh(MeshGenerator.GenerateMesh(texture, visualizationHeightScale), colorTexture);
         //VisualizeGrid();
         //CombineCubes();
         long elapsedMilliseconds = stopwatch.ElapsedMilliseconds;
