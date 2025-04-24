@@ -1,22 +1,23 @@
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using UnityEngine;
-using UnityEngine.UI; // Potrzebne do pracy z komponentami UI
+using UnityEngine.UI;
 
 public class Voronoi : MonoBehaviour
 {
     public int textureWidth = 256;
     public int textureHeight = 256;
     public int numCells = 20;
-
     public int maxHeight = 20;
-
     public float normalizationPower = 2f;
-    public RawImage rawImage;
+    public RawImage hightVisualizationUI;
+    public RawImage regionVisualizationUI;
     public GameObject visualizationCube;
     public float visualizationHeightScale = 5f;
     private List<MeshFilter> meshFilters = new();
-    Texture2D texture;
+    private Texture2D texture;
+    private Texture2D colorTexture;
+    private TerrainType[] regions;
     [SerializeReference] private GameObject visualizationParent;
 
     public void ClearVisualization()
@@ -25,23 +26,25 @@ public class Voronoi : MonoBehaviour
         Destroy(visualizationParent.GetComponent<MeshRenderer>());
         meshFilters.Clear();
     }
-    public void Generate()
+    public void Generate(TerrainType[] _regions)
     {
-        if (rawImage == null)
+        regions = _regions;
+        if (hightVisualizationUI == null || regionVisualizationUI == null)
         {
             Debug.LogError("Raw Image nie jest przypisany!");
             return;
         }
-        Texture2D voronoiTexture = GenerateVoronoiTexture();
-        rawImage.texture = voronoiTexture;
-
-        VisualizeGrid();
-        CombineCubes();
+        (Texture2D voronoiHeightTexture, Texture2D voronoiRegionTexture) = GenerateVoronoiTexture();
+        hightVisualizationUI.texture = voronoiHeightTexture;
+        regionVisualizationUI.texture = voronoiRegionTexture;
+        MapDisplay mapDisplay = GetComponent<MapDisplay>();
+        mapDisplay.DrawMesh(MeshGenerator.GenerateMesh(voronoiHeightTexture, visualizationHeightScale), voronoiRegionTexture);
     }
 
-    Texture2D GenerateVoronoiTexture()
+    (Texture2D, Texture2D) GenerateVoronoiTexture()
     {
         texture = new Texture2D(textureWidth, textureHeight);
+        colorTexture = new Texture2D(textureWidth, textureHeight);
 
         Vector2[] points = new Vector2[numCells];
         for (int i = 0; i < numCells; i++)
@@ -63,26 +66,26 @@ public class Voronoi : MonoBehaviour
                 float normalizedDistance = Mathf.InverseLerp(maxHeight, 0, minDistance);
                 normalizedDistance = Mathf.Pow(normalizedDistance, normalizationPower);
                 
-                Color pixelColor = Color.Lerp(Color.black, Color.white, normalizedDistance);
-                texture.SetPixel(x, y, pixelColor);
+                Color pixelHeightColor = Color.Lerp(Color.black, Color.white, normalizedDistance);
+                texture.SetPixel(x, y, pixelHeightColor);
+                Color pixelColor = new();
+                for(int i = 0; i < regions.Length; i++)
+                {
+                    if(normalizedDistance <= regions[i].height)
+                    {
+                        pixelColor = regions[i].color;
+                        break;
+                    }
+                }
+                colorTexture.SetPixel(x, y, pixelColor);
+
             }
         }
-
+        texture.filterMode = FilterMode.Point;
+        colorTexture.filterMode = FilterMode.Point;
+        colorTexture.Apply();
         texture.Apply();
-        return texture;
-    }
-
-    private void VisualizeGrid()
-    {
-        for(int x = 0; x < textureWidth; x++)
-        {
-            for(int y = 0; y < textureHeight; y++)
-            {
-                GameObject clone = Instantiate(visualizationCube, new Vector3(x, SampleStep(x, y) * visualizationHeightScale, y) + transform.position, transform.rotation);
-                meshFilters.Add(clone.GetComponent<MeshFilter>());
-                clone.transform.SetParent(visualizationParent.transform);
-            }
-        }   
+        return (texture, colorTexture);
     }
 
     private float SampleStep(int x, int y)
@@ -90,21 +93,4 @@ public class Voronoi : MonoBehaviour
         float sampledFloat = texture.GetPixel(x, y).grayscale;
         return sampledFloat;
     }   
-
-    private void CombineCubes()
-    {
-        CombineInstance[] combine = new CombineInstance[meshFilters.Count];
-        for(int i = 0; i < meshFilters.Count; i++)
-        {
-            combine[i].mesh = meshFilters[i].sharedMesh;
-            combine[i].transform = meshFilters[i].transform.localToWorldMatrix;
-            Destroy(meshFilters[i].gameObject);
-        }
-        Mesh combinedMesh = new();
-        combinedMesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
-        visualizationParent.AddComponent<MeshFilter>().mesh = combinedMesh;
-        visualizationParent.AddComponent<MeshRenderer>().material = visualizationCube.GetComponent<MeshRenderer>().sharedMaterial;
-        combinedMesh.CombineMeshes(combine);
-
-    }
 }

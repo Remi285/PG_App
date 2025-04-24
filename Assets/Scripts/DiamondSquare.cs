@@ -27,8 +27,6 @@ public class DiamondSquare : MonoBehaviour
         Stopwatch stopwatch = new Stopwatch();
         stopwatch.Start();
         GenerateDiamondSquare();
-        CreateVisualization();
-        CombineCubes();
         long elapsedMilliseconds = stopwatch.ElapsedMilliseconds;
         UnityEngine.Debug.Log("Generation time: " + elapsedMilliseconds + " ms");
         roughness = saveRoughness;
@@ -96,41 +94,5 @@ public class DiamondSquare : MonoBehaviour
                 map[x, y] = sum / count + Random.Range(-roughness, roughness);
             }
         }
-    }
-    private void CreateVisualization()
-    {
-        for (int x = 0; x < size; x++)
-        {
-            for (int y = 0; y < size; y++)
-            {
-                float height = map[x, y];
-                Vector3 position = new Vector3(x, height * heightScale, y);
-                GameObject clone = Instantiate(visualizationCube, position, Quaternion.identity);
-                clone.transform.SetParent(visualizationParent.transform);
-                meshFilters.Add(clone.GetComponent<MeshFilter>());
-            }
-        }
-    }
-    private void CombineCubes()
-    {
-        CombineInstance[] combine = new CombineInstance[meshFilters.Count];
-        for(int i = 0; i < meshFilters.Count; i++)
-        {
-            combine[i].mesh = meshFilters[i].sharedMesh;
-            combine[i].transform = meshFilters[i].transform.localToWorldMatrix;
-            Destroy(meshFilters[i].gameObject);
-        }
-        Mesh combinedMesh = new();
-        combinedMesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
-        visualizationParent.AddComponent<MeshFilter>().mesh = combinedMesh;
-        visualizationParent.AddComponent<MeshRenderer>().material = visualizationCube.GetComponent<MeshRenderer>().sharedMaterial;
-        combinedMesh.CombineMeshes(combine);
-    }
-
-    public void ClearVisualization()
-    {
-        Destroy(visualizationParent.GetComponent<MeshFilter>());
-        Destroy(visualizationParent.GetComponent<MeshRenderer>());
-        meshFilters.Clear();
     }
 }

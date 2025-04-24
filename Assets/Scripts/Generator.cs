@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TreeEditor;
@@ -10,8 +11,8 @@ public class Generator : MonoBehaviour
     private bool canGenerate = true;
     public PerlinNoise perlinNoiseScript;
     public DiamondSquare diamondSquare;
-    public OneD oneD;
     public Voronoi voronoi;
+    public TerrainType[] regions;
 
     private void Awake() 
     {
@@ -35,55 +36,23 @@ public class Generator : MonoBehaviour
         {
             Debug.LogError("Clear generation first");
         }
-
     }
 
-    public void Generate1D()
-    {
-        if(canGenerate)
-        {
-            oneD.Generate();
-            canGenerate = false;
-        }
-        else
-        {
-            Debug.LogError("Clear generation first");
-        }
-
-    }
     public void GeneratePerlin()
     {
-        perlinNoiseScript.Generate();
-
-        // if(canGenerate)
-        // {
-        //     perlinNoiseScript.Generate();
-        //     canGenerate = false;
-        // }
-        // else
-        // {
-        //     Debug.LogError("Clear generation first");
-        // }
+        perlinNoiseScript.Generate(regions);
     }
 
     public void GenerateVoronoi()
     {
-        if(canGenerate)
-        {
-            voronoi.Generate();
-            canGenerate = false;
-        }
-        else
-        {
-            Debug.LogError("Clear generation first");
-        }
+        voronoi.Generate(regions);
     }
-    public void ClearVisualization()
-    {
-        perlinNoiseScript.ClearVisualization();
-        diamondSquare.ClearVisualization();
-        oneD.ClearVisualization();
-        voronoi.ClearVisualization();
-        canGenerate = true;
-    }
+}
+
+[Serializable]
+public struct TerrainType
+{
+    public string name;
+    public float height;
+    public Color color;
 }
