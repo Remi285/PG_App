@@ -27,15 +27,7 @@ public class Generator : MonoBehaviour
     }
     public void GenerateDiamonSquare()
     {
-        if(canGenerate)
-        {
-            diamondSquare.Generate();
-            canGenerate = false;
-        }
-        else
-        {
-            Debug.LogError("Clear generation first");
-        }
+        diamondSquare.Generate(regions);
     }
 
     public void GeneratePerlin()

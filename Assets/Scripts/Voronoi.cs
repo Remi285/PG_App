@@ -47,6 +47,11 @@ public class Voronoi : MonoBehaviour
         colorTexture = new Texture2D(textureWidth, textureHeight);
 
         Vector2[] points = new Vector2[numCells];
+        int[] pointsHights = new int[numCells];
+        for (int i = 0; i < numCells; i++)
+        {
+            pointsHights[i] = Random.Range(5, maxHeight);
+        }
         for (int i = 0; i < numCells; i++)
         {
             points[i] = new Vector2(Random.Range(0, textureWidth), Random.Range(0, textureHeight));
@@ -56,16 +61,20 @@ public class Voronoi : MonoBehaviour
             for (int y = 0; y < textureHeight; y++)
             {
                 float minDistance = float.MaxValue;
-
-                foreach (var point in points)
+                float height = 0f;
+                for(int i = 0; i < numCells; i++)
                 {
-                    float distance = Vector2.Distance(new Vector2(x, y), point);
+                    float distance = Vector2.Distance(new Vector2(x, y), points[i]);
                     if (distance < minDistance)
+                    {
                         minDistance = distance;
+                        height = pointsHights[i];
+                    }
                 }
                 float normalizedDistance = Mathf.InverseLerp(maxHeight, 0, minDistance);
+                //normalizedDistance = Mathf.InverseLerp(maxHeight, 0,  normalizedDistance);
                 normalizedDistance = Mathf.Pow(normalizedDistance, normalizationPower);
-                
+                normalizedDistance = height * normalizedDistance/maxHeight;
                 Color pixelHeightColor = Color.Lerp(Color.black, Color.white, normalizedDistance);
                 texture.SetPixel(x, y, pixelHeightColor);
                 Color pixelColor = new();

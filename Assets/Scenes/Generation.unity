@@ -205,7 +205,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   perlinNoiseScript: {fileID: 327238170}
   diamondSquare: {fileID: 327238169}
-  oneD: {fileID: 0}
   voronoi: {fileID: 327238171}
   regions:
   - name: Water
@@ -236,8 +235,8 @@ MonoBehaviour:
   size: 0
   roughness: 1
   heightScale: 30
-  visualizationCube: {fileID: 8639042997286656730, guid: 6baf8f1f0efd68941b978438ab3515f8, type: 3}
-  visualizationParent: {fileID: 866266616}
+  hightVisualizationUI: {fileID: 1983536218}
+  regionVisualizationUI: {fileID: 392409671}
 --- !u!114 &327238170
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -897,7 +896,7 @@ Transform:
   m_GameObject: {fileID: 1148994369}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 837}
+  m_LocalPosition: {x: 651, y: 0, z: 927}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
