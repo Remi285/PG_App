@@ -45,7 +45,6 @@ public class DiamondSquare : MonoBehaviour
     private void GenerateDiamondSquare()
     {
         size = (int)Mathf.Pow(2f, (float)sizePower) + 1;
-        UnityEngine.Debug.Log("Size: " + size);
         texture = new Texture2D(size, size);
         colorTexture = new Texture2D(size, size);
         map = new float[size, size];
@@ -145,9 +144,9 @@ public class DiamondSquare : MonoBehaviour
     }
     private void SquareStep()
     {
-        for (int x = 0; x < size - 1; x += stepSize / 2)
+        for (int x = 0; x <= size - 1; x += stepSize / 2)
         {
-            for (int y = (x + stepSize / 2) % stepSize; y < size - 1; y += stepSize)
+            for (int y = (x + stepSize / 2) % stepSize; y <= size - 1; y += stepSize)
             {
                 float sum = 0;
                 int count = 0;
