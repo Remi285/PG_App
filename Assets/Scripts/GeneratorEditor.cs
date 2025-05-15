@@ -10,17 +10,21 @@ public class GeneratorEditor : Editor
     {
         DrawDefaultInspector();
         Generator generator = (Generator)target;
-        if(GUILayout.Button("Generate perlin noise"))
+        if (GUILayout.Button("Generate perlin noise"))
         {
             generator.GeneratePerlin();
         }
-        if(GUILayout.Button("Generate diamond square"))
+        if (GUILayout.Button("Generate diamond square"))
         {
             generator.GenerateDiamonSquare();
         }
-        if(GUILayout.Button("Generate Voronoi"))
+        if (GUILayout.Button("Generate Voronoi"))
         {
             generator.GenerateVoronoi();
+        }
+        if (GUILayout.Button("Generate from image"))
+        {
+            generator.GenerateFromImage();
         }
     }
 }

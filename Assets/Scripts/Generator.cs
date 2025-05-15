@@ -12,15 +12,16 @@ public class Generator : MonoBehaviour
     public PerlinNoise perlinNoiseScript;
     public DiamondSquare diamondSquare;
     public Voronoi voronoi;
+    public GenerateFromImage generateFromImage;
     public TerrainType[] regions;
 
-    private void Awake() 
+    private void Awake()
     {
-        if(instance == null)
+        if (instance == null)
         {
             instance = this;
         }
-        else if(instance != this)
+        else if (instance != this)
         {
             Destroy(this.gameObject);
         }
@@ -38,6 +39,10 @@ public class Generator : MonoBehaviour
     public void GenerateVoronoi()
     {
         voronoi.Generate(regions);
+    }
+    public void GenerateFromImage()
+    {
+        generateFromImage.Generate(regions);
     }
 }
 
