@@ -26,5 +26,9 @@ public class GeneratorEditor : Editor
         {
             generator.GenerateFromImage();
         }
+        if (GUILayout.Button("Generate NN"))
+        {
+            generator.GenerateNN();
+        }
     }
 }

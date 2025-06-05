@@ -164,6 +164,7 @@ GameObject:
   - component: {fileID: 327238166}
   - component: {fileID: 327238167}
   - component: {fileID: 327238173}
+  - component: {fileID: 327238174}
   - component: {fileID: 327238170}
   - component: {fileID: 327238169}
   - component: {fileID: 327238171}
@@ -208,6 +209,7 @@ MonoBehaviour:
   diamondSquare: {fileID: 327238169}
   voronoi: {fileID: 327238171}
   generateFromImage: {fileID: 327238173}
+  nnGeneration: {fileID: 327238174}
   regions:
   - name: Water
     height: 0.2
@@ -252,7 +254,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   textureSizeX: 200
-  textureSizeY: 100
+  textureSizeY: 200
   randomizeNoiseOffest: 1
   offset: {x: 75196, y: 32474}
   noiseScale: 2
@@ -313,10 +315,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c61e46d7cda69b24a985dbe9455efa79, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  texture: {fileID: 2800000, guid: 6cc1942fda8dedc48a30172229952cb5, type: 3}
+  texture: {fileID: 2800000, guid: 717ebc22c8e2e4e449933e0a6968d1a2, type: 3}
   hightVisualizationUI: {fileID: 1983536218}
   regionVisualizationUI: {fileID: 392409671}
   visualizationHeightScale: 50
+--- !u!114 &327238174
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 327238164}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9e88d124f62d3ac488cc6d69c12e67da, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  modelAsset: {fileID: 5022602860645237092, guid: 9cb6771e6498fa349ba01d29bb923269, type: 3}
+  latentSize: 512
+  outputSize: 512
 --- !u!1 &392409669
 GameObject:
   m_ObjectHideFlags: 0

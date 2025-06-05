@@ -13,6 +13,7 @@ public class Generator : MonoBehaviour
     public DiamondSquare diamondSquare;
     public Voronoi voronoi;
     public GenerateFromImage generateFromImage;
+    public NNGeneration nnGeneration;
     public TerrainType[] regions;
 
     private void Awake()
@@ -43,6 +44,10 @@ public class Generator : MonoBehaviour
     public void GenerateFromImage()
     {
         generateFromImage.Generate(regions);
+    }
+    public void GenerateNN()
+    {
+        nnGeneration.Generate(regions);
     }
 }
 

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 //Stworzony na podstawie https://youtu.be/4RpVBYW1r5M?si=e662YPWQocSmjBPd
 public class MeshGenerator : MonoBehaviour
@@ -57,6 +58,7 @@ public class MeshData
     public Mesh CreateMesh()
     {
         Mesh mesh = new Mesh();
+        mesh.indexFormat = IndexFormat.UInt32;
         mesh.vertices = vertices;
         mesh.triangles = triangles;
         mesh.uv = uvs;

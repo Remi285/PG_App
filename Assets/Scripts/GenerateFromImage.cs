@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class GenerateFromImage : MonoBehaviour
 {
     public Texture2D texture;
-    private Texture2D colorTexture;
+    //private Texture2D colorTexture;
     public RawImage hightVisualizationUI;
     public RawImage regionVisualizationUI;
     public float visualizationHeightScale = 5f;
@@ -14,7 +14,7 @@ public class GenerateFromImage : MonoBehaviour
     public void Generate(TerrainType[] _regions)
     {
         regions = _regions;
-        GenerateColorTexture();
+        var colorTexture = GenerateColorTexture(texture);
         texture.filterMode = FilterMode.Point;
         texture.Apply();
         hightVisualizationUI.texture = texture;
@@ -25,19 +25,31 @@ public class GenerateFromImage : MonoBehaviour
         MapDisplay mapDisplay = GetComponent<MapDisplay>();
         mapDisplay.DrawMesh(MeshGenerator.GenerateMesh(texture, visualizationHeightScale), colorTexture);
     }
+    public void Generate(TerrainType[] _regions, Texture2D heightMap)
+    {
+        regions = _regions;
+        var colorTexture = GenerateColorTexture(heightMap);
+        heightMap.filterMode = FilterMode.Point;
+        heightMap.Apply();
+        hightVisualizationUI.texture = heightMap;
+        colorTexture.filterMode = FilterMode.Point;
+        colorTexture.Apply();
+        regionVisualizationUI.texture = colorTexture;
 
-    private void GenerateColorTexture()
+        MapDisplay mapDisplay = GetComponent<MapDisplay>();
+        mapDisplay.DrawMesh(MeshGenerator.GenerateMesh(heightMap, visualizationHeightScale), colorTexture);
+    }
+
+    private Texture2D GenerateColorTexture(Texture2D _texture)
     {
         int x_count = 0;
         int y_count = 0;
-        Debug.LogError(texture.GetPixel(200, 200));
-        colorTexture = new Texture2D(texture.width, texture.height);
-        for (int x = 0; x < texture.width; x++)
+        Texture2D colorTexture = new Texture2D(_texture.width, _texture.height);
+        for (int x = 0; x < _texture.width; x++)
         {
-            for (int y = 0; y < texture.height; y++)
+            for (int y = 0; y < _texture.height; y++)
             {
-                float dist = texture.GetPixel(x, y).grayscale;
-                //Debug.Log("X: " + x + " Y: " + y + " Dist: " + dist);
+                float dist = _texture.GetPixel(x, y).grayscale;
                 Color pixelColor = new();
                 for (int i = 0; i < regions.Length; i++)
                 {
@@ -52,7 +64,6 @@ public class GenerateFromImage : MonoBehaviour
             }
             x_count++;
         }
-        Debug.LogError("X: " + x_count + " Y: " + y_count);
+        return colorTexture;
     }
-
 }
