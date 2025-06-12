@@ -125,7 +125,9 @@ public class DiamondSquare : MonoBehaviour
             for(int y = 0; y < size - 1; y += stepSize)
             {
                 float avg = (map[x, y] + map[x + stepSize, y] + map[x, y + stepSize] + map[x + stepSize, y + stepSize]) / 4f;
-                map[x + stepSize / 2, y + stepSize / 2] = avg + Random.Range(-roughness, roughness);
+                //map[x + stepSize / 2, y + stepSize / 2] = avg + Random.Range(-roughness, roughness);
+                map[x + stepSize / 2, y + stepSize / 2] = Mathf.Clamp01(avg + Random.Range(-roughness, roughness));
+
                 float dist = map[x + stepSize / 2, y + stepSize / 2];
                 Color pixelHeightColor = Color.Lerp(Color.black, Color.white, dist);
                 texture.SetPixel(x + stepSize / 2, y + stepSize / 2, pixelHeightColor);
@@ -172,7 +174,9 @@ public class DiamondSquare : MonoBehaviour
                     count++;
                 }
 
-                map[x, y] = sum / count + Random.Range(-roughness, roughness);
+                //map[x, y] = sum / count + Random.Range(-roughness, roughness);
+                map[x, y] = Mathf.Clamp01(sum / count + Random.Range(-roughness, roughness));
+
                 float dist = map[x, y];
                 Color pixelHeightColor = Color.Lerp(Color.black, Color.white, dist);
                 texture.SetPixel(x, y, pixelHeightColor);
