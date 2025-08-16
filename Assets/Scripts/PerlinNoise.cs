@@ -57,33 +57,23 @@ public class PerlinNoise : MonoBehaviour
     public void Generate(TerrainType[] _regions)
     {
         regions = _regions;
-        Stopwatch stopwatch = new Stopwatch();
-        stopwatch.Start();
         GenerateNoise();
         MapDisplay mapDisplay = GetComponent<MapDisplay>();
         mapDisplay.DrawMesh(MeshGenerator.GenerateMesh(texture, visualizationHeightScale), colorTexture);
-        long elapsedMilliseconds = stopwatch.ElapsedMilliseconds;
-        UnityEngine.Debug.Log("Generation time: " + elapsedMilliseconds + " ms");
     }
-
-    private float SampleStep(int x, int y)
-    {
-        float sampledFloat = texture.GetPixel(x, y).grayscale;
-        return sampledFloat;
-    }
-
+    
     private void GenerateNoise()
     {
-        if(randomizeNoiseOffest)
+        if (randomizeNoiseOffest)
         {
-            offset = new Vector2(UnityEngine.Random.Range(0, 99999), 
+            offset = new Vector2(UnityEngine.Random.Range(0, 99999),
             UnityEngine.Random.Range(0, 99999));
         }
         texture = new Texture2D(textureSizeX, textureSizeY);
         colorTexture = new Texture2D(textureSizeX, textureSizeY);
-        for(int x = 0; x < textureSizeX; x++)
+        for (int x = 0; x < textureSizeX; x++)
         {
-            for(int y = 0; y < textureSizeY; y++)
+            for (int y = 0; y < textureSizeY; y++)
             {
                 texture.SetPixel(x, y, SampleNoise(x, y).Item1);
                 colorTexture.SetPixel(x, y, SampleNoise(x, y).Item2);

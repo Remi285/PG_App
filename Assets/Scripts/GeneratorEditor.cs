@@ -18,9 +18,9 @@ public class GeneratorEditor : Editor
         {
             generator.GenerateDiamonSquare();
         }
-        if (GUILayout.Button("Generate Voronoi"))
+        if (GUILayout.Button("Generate Worley"))
         {
-            generator.GenerateVoronoi();
+            generator.GenerateWorley();
         }
         if (GUILayout.Button("Generate from image"))
         {

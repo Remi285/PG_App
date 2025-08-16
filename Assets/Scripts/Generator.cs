@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using TreeEditor;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -11,7 +12,7 @@ public class Generator : MonoBehaviour
     private bool canGenerate = true;
     public PerlinNoise perlinNoiseScript;
     public DiamondSquare diamondSquare;
-    public Voronoi voronoi;
+    public Worley worley;
     public GenerateFromImage generateFromImage;
     public NNGeneration nnGeneration;
     public TerrainType[] regions;
@@ -29,25 +30,46 @@ public class Generator : MonoBehaviour
     }
     public void GenerateDiamonSquare()
     {
+        Stopwatch stopwatch = new Stopwatch();
+        stopwatch.Start();
         diamondSquare.Generate(regions);
+        long elapsedMilliseconds = stopwatch.ElapsedMilliseconds;
+        UnityEngine.Debug.Log("Generation time: " + elapsedMilliseconds + " ms");
+
     }
 
     public void GeneratePerlin()
     {
+        Stopwatch stopwatch = new Stopwatch();
+        stopwatch.Start();
         perlinNoiseScript.Generate(regions);
+        long elapsedMilliseconds = stopwatch.ElapsedMilliseconds;
+        UnityEngine.Debug.Log("Generation time: " + elapsedMilliseconds + " ms");
     }
 
-    public void GenerateVoronoi()
+    public void GenerateWorley()
     {
-        voronoi.Generate(regions);
+        Stopwatch stopwatch = new Stopwatch();
+        stopwatch.Start();
+        worley.Generate(regions);
+        long elapsedMilliseconds = stopwatch.ElapsedMilliseconds;
+        UnityEngine.Debug.Log("Generation time: " + elapsedMilliseconds + " ms");
     }
     public void GenerateFromImage()
     {
+        Stopwatch stopwatch = new Stopwatch();
+        stopwatch.Start();
         generateFromImage.Generate(regions);
+        long elapsedMilliseconds = stopwatch.ElapsedMilliseconds;
+        UnityEngine.Debug.Log("Generation time: " + elapsedMilliseconds + " ms");
     }
     public void GenerateNN()
     {
+        Stopwatch stopwatch = new Stopwatch();
+        stopwatch.Start();
         nnGeneration.Generate(regions);
+        long elapsedMilliseconds = stopwatch.ElapsedMilliseconds;
+        UnityEngine.Debug.Log("Generation time: " + elapsedMilliseconds + " ms");
     }
 }
 
