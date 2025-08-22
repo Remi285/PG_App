@@ -22,10 +22,9 @@ public class Worley : MonoBehaviour
     private TerrainType[] regions;
     [SerializeReference] private GameObject visualizationParent;
     int[,] cellIndexMap;
-    private float[,] heightMap;
 
     private Vector2[] points;
-
+    public event System.Func<bool> OnGenerate;
 
     (Texture2D, Texture2D) GenerateVoronoi()
     {
@@ -86,6 +85,8 @@ public class Worley : MonoBehaviour
             }
         }
 
+        texture.filterMode = FilterMode.Point;
+        colorTexture.filterMode = FilterMode.Point;
         texture.Apply();
         colorTexture.Apply();
         regionVisualizationUI.texture = colorTexture;
@@ -93,26 +94,26 @@ public class Worley : MonoBehaviour
         return (texture, colorTexture);
     }
 
-float GetDistanceToWater(int x, int y, bool[] isLand)
-{
-    for (int r = 0; r < Mathf.Max(textureWidth, textureHeight); r++)
+    float GetDistanceToWater(int x, int y, bool[] isLand)
     {
-        for (int dx = -r; dx <= r; dx++)
+        for (int r = 0; r < Mathf.Max(textureWidth, textureHeight); r++)
         {
-            for (int dy = -r; dy <= r; dy++)
+            for (int dx = -r; dx <= r; dx++)
             {
-                int nx = x + dx;
-                int ny = y + dy;
-                if (nx >= 0 && nx < textureWidth && ny >= 0 && ny < textureHeight)
+                for (int dy = -r; dy <= r; dy++)
                 {
-                    if (!isLand[cellIndexMap[nx, ny]])
-                        return r;
+                    int nx = x + dx;
+                    int ny = y + dy;
+                    if (nx >= 0 && nx < textureWidth && ny >= 0 && ny < textureHeight)
+                    {
+                        if (!isLand[cellIndexMap[nx, ny]])
+                            return r;
+                    }
                 }
             }
         }
+        return 0;
     }
-    return 0;
-}
 
     Color GetColorFromRegions(float height)
     {
@@ -132,6 +133,8 @@ float GetDistanceToWater(int x, int y, bool[] isLand)
     }
     public void Generate(TerrainType[] _regions)
     {
+        if (OnGenerate != null && OnGenerate.Invoke() == false)
+            return;
         regions = _regions;
         (Texture2D voronoiHeightTexture, Texture2D voronoiRegionTexture) = GenerateVoronoi();
         MapDisplay mapDisplay = GetComponent<MapDisplay>();

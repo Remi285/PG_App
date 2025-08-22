@@ -1,11 +1,5 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.TerrainUtils;
 using UnityEngine.UI;
 
 public class PerlinNoise : MonoBehaviour
@@ -28,22 +22,21 @@ public class PerlinNoise : MonoBehaviour
 
     private Texture2D texture;
     private Texture2D colorTexture;
-
-
     private TerrainType[] regions;
         
     public int octaves = 4;
     public float lacunarity = 2f;
     public float persistence = 0.5f;
 
+    public event Func<bool> OnGenerate;
 
-    private void Awake() 
+    private void Awake()
     {
-        if(instance == null)
+        if (instance == null)
         {
             instance = this;
         }
-        else if(instance != this)
+        else if (instance != this)
         {
             Destroy(this.gameObject);
         }
@@ -56,6 +49,8 @@ public class PerlinNoise : MonoBehaviour
     }
     public void Generate(TerrainType[] _regions)
     {
+        if (OnGenerate != null && OnGenerate.Invoke() == false)
+            return;
         regions = _regions;
         GenerateNoise();
         MapDisplay mapDisplay = GetComponent<MapDisplay>();

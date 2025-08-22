@@ -1,9 +1,3 @@
-using System.CodeDom.Compiler;
-using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -12,8 +6,8 @@ using UnityEngine.UI;
 public class DiamondSquare : MonoBehaviour
 {
     [SerializeField] private int sizePower;
-    [SerializeField] private int size;
-    [SerializeField, Range(0, 1)] private float roughness;
+    public int size;
+    [Range(0, 1)] public float roughness;
     private float saveRoughness;
     [SerializeField] private float heightScale = 1;
     private float[,] map;
@@ -23,8 +17,13 @@ public class DiamondSquare : MonoBehaviour
     private TerrainType[] regions;
     public RawImage hightVisualizationUI;
     public RawImage regionVisualizationUI;
+
+    public event System.Func<bool> OnGenerate;
+
     public void Generate(TerrainType[] _regions)
     {
+        if (OnGenerate != null && OnGenerate.Invoke() == false)
+            return;
         regions = _regions;
         saveRoughness = roughness;
         GenerateDiamondSquare();
@@ -40,7 +39,7 @@ public class DiamondSquare : MonoBehaviour
     }
     private void GenerateDiamondSquare()
     {
-        size = (int)Mathf.Pow(2f, (float)sizePower) + 1;
+        //size = (int)Mathf.Pow(2f, (float)sizePower) + 1;
         texture = new Texture2D(size, size);
         colorTexture = new Texture2D(size, size);
         map = new float[size, size];
