@@ -1,10 +1,7 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Diagnostics;
-using TreeEditor;
-using Unity.VisualScripting;
 using UnityEngine;
+using TMPro;
 
 public class Generator : MonoBehaviour
 {
@@ -16,6 +13,11 @@ public class Generator : MonoBehaviour
     public GenerateFromImage generateFromImage;
     public NNGeneration nnGeneration;
     public TerrainType[] regions;
+
+    [SerializeField] TMP_InputField perlin_gen_time;
+    [SerializeField] TMP_InputField ds_gen_time;
+    [SerializeField] TMP_InputField worley_gen_time;
+    [SerializeField] TMP_InputField ai_gen_time;
 
     private void Awake()
     {
@@ -35,6 +37,7 @@ public class Generator : MonoBehaviour
         diamondSquare.Generate(regions);
         long elapsedMilliseconds = stopwatch.ElapsedMilliseconds;
         UnityEngine.Debug.Log("Generation time: " + elapsedMilliseconds + " ms");
+        ds_gen_time.text = elapsedMilliseconds.ToString();
 
     }
 
@@ -45,6 +48,7 @@ public class Generator : MonoBehaviour
         perlinNoiseScript.Generate(regions);
         long elapsedMilliseconds = stopwatch.ElapsedMilliseconds;
         UnityEngine.Debug.Log("Generation time: " + elapsedMilliseconds + " ms");
+        perlin_gen_time.text = elapsedMilliseconds.ToString();
     }
 
     public void GenerateWorley()
@@ -54,6 +58,7 @@ public class Generator : MonoBehaviour
         worley.Generate(regions);
         long elapsedMilliseconds = stopwatch.ElapsedMilliseconds;
         UnityEngine.Debug.Log("Generation time: " + elapsedMilliseconds + " ms");
+        worley_gen_time.text = elapsedMilliseconds.ToString();
     }
     public void GenerateFromImage()
     {
@@ -70,6 +75,7 @@ public class Generator : MonoBehaviour
         nnGeneration.Generate(regions);
         long elapsedMilliseconds = stopwatch.ElapsedMilliseconds;
         UnityEngine.Debug.Log("Generation time: " + elapsedMilliseconds + " ms");
+        ai_gen_time.text = elapsedMilliseconds.ToString();
     }
 }
 

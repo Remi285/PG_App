@@ -13,11 +13,17 @@ public class NNGeneration : MonoBehaviour
 
     private Model runtimeModel;
     private IWorker worker;
+    public System.Action OnGenerate;
 
-    public void Generate(TerrainType[] _regions)
+    void Start()
     {
         runtimeModel = ModelLoader.Load(modelAsset);
-        worker = WorkerFactory.CreateWorker(WorkerFactory.Type.Auto, runtimeModel);
+        if (worker == null)
+            worker = WorkerFactory.CreateWorker(WorkerFactory.Type.Auto, runtimeModel);
+    }
+    public void Generate(TerrainType[] _regions)
+    {
+        OnGenerate?.Invoke();
         var heightMap = GenerateHeightmap();
         FindObjectOfType<GenerateFromImage>().Generate(_regions, heightMap);
     }
