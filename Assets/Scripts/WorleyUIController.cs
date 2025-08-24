@@ -31,7 +31,7 @@ public class WorleyUIController : MonoBehaviour
             worley.textureWidth = Convert.ToInt32(size_x.text);
             worley.textureHeight = Convert.ToInt32(size_y.text);
             worley.numCells = Convert.ToInt32(cellNum.text);
-            worley.normalizationPower = float.Parse(normalizationPower.text);
+            //worley.normalizationPower = float.Parse(normalizationPower.text);
             worley.waterProbability = waterProbability.value;
         }
         catch

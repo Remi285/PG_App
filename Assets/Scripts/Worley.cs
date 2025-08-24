@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Runtime.InteropServices;
 using UnityEngine;
@@ -25,6 +26,7 @@ public class Worley : MonoBehaviour
 
     private Vector2[] points;
     public event System.Func<bool> OnGenerate;
+    private int[,] distanceToWater;
 
     (Texture2D, Texture2D) GenerateVoronoi()
     {
@@ -42,9 +44,8 @@ public class Worley : MonoBehaviour
         {
             points[i] = new Vector2(Random.Range(0, textureWidth), Random.Range(0, textureHeight));
             isLand[i] = Random.value > waterProbability;
-            cellMaxHeight[i] = Random.Range(0.8f, 1f);
+            cellMaxHeight[i] = Random.Range(0.3f, 1f);
         }
-
         for (int x = 0; x < textureWidth; x++)
         {
             for (int y = 0; y < textureHeight; y++)
@@ -64,7 +65,7 @@ public class Worley : MonoBehaviour
                 cellIndexMap[x, y] = closestIndex;
             }
         }
-
+        ComputeDistanceMap(isLand);
         for (int x = 0; x < textureWidth; x++)
         {
             for (int y = 0; y < textureHeight; y++)
@@ -74,10 +75,17 @@ public class Worley : MonoBehaviour
 
                 if (isLand[index])
                 {
-                    float distToWater = GetDistanceToWater(x, y, isLand);
+
+                    float distToWater = distanceToWater[x, y];
                     float normalized = Mathf.Clamp01(distToWater / 15f);
                     heightValue = Mathf.Pow(normalized, normalizationPower);
                     heightValue *= cellMaxHeight[index];
+
+                    // float distToCenter = Vector2.Distance(new Vector2(x, y), points[index]);
+                    // float maxDist = 5 * Mathf.Sqrt(textureWidth * textureWidth + textureHeight * textureHeight) / numCells;
+                    // float centerFactor = 1f - Mathf.Clamp01(distToCenter / maxDist);
+
+                    // heightValue *= Mathf.Lerp(0.8f, 1.2f, centerFactor);
                 }
                 texture.SetPixel(x, y, new Color(heightValue, heightValue, heightValue));
                 Color terrainColor = GetColorFromRegions(heightValue);
@@ -94,26 +102,51 @@ public class Worley : MonoBehaviour
         return (texture, colorTexture);
     }
 
-    float GetDistanceToWater(int x, int y, bool[] isLand)
+    void ComputeDistanceMap(bool[] isLand)
     {
-        for (int r = 0; r < Mathf.Max(textureWidth, textureHeight); r++)
+        distanceToWater = new int[textureWidth, textureHeight];
+        for (int x = 0; x < textureWidth; x++)
         {
-            for (int dx = -r; dx <= r; dx++)
+            for (int y = 0; y < textureHeight; y++)
             {
-                for (int dy = -r; dy <= r; dy++)
+                distanceToWater[x, y] = int.MaxValue;
+            }
+        }
+
+        Queue<Vector2Int> q = new Queue<Vector2Int>();
+        for (int x = 0; x < textureWidth; x++)
+        {
+            for (int y = 0; y < textureHeight; y++)
+            {
+                if (!isLand[cellIndexMap[x, y]])
                 {
-                    int nx = x + dx;
-                    int ny = y + dy;
-                    if (nx >= 0 && nx < textureWidth && ny >= 0 && ny < textureHeight)
+                    distanceToWater[x, y] = 0;
+                    q.Enqueue(new Vector2Int(x, y));
+                }
+            }
+        }
+
+        int[] dx = {1, -1, 0, 0};
+        int[] dy = {0, 0, 1, -1};
+        while (q.Count > 0)
+        {
+            var p = q.Dequeue();
+            for (int i = 0; i < 4; i++)
+            {
+                int nx = p.x + dx[i];
+                int ny = p.y + dy[i];
+                if (nx >= 0 && nx < textureWidth && ny >= 0 && ny < textureHeight)
+                {
+                    if (distanceToWater[nx, ny] > distanceToWater[p.x, p.y] + 1)
                     {
-                        if (!isLand[cellIndexMap[nx, ny]])
-                            return r;
+                        distanceToWater[nx, ny] = distanceToWater[p.x, p.y] + 1;
+                        q.Enqueue(new Vector2Int(nx, ny));
                     }
                 }
             }
         }
-        return 0;
     }
+
 
     Color GetColorFromRegions(float height)
     {

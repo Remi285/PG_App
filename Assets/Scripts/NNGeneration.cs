@@ -56,7 +56,7 @@ public class NNGeneration : MonoBehaviour
 
         if (applyBlur)
         {
-            tex = ApplyFastBlur(ApplyFastBlur(tex));
+            tex = ApplyFastBlur(tex);//ApplyFastBlur(ApplyFastBlur(tex));
         }
 
         if (applyGaussianBlur)
@@ -69,41 +69,70 @@ public class NNGeneration : MonoBehaviour
         return tex;
     }
 
-    Texture2D ApplyFastBlur(Texture2D inputTexture, int radius = 5)
+    Texture2D ApplyFastBlur(Texture2D input, int radius = 5)
     {
-        int width = inputTexture.width;
-        int height = inputTexture.height;
-        Color[] pixels = inputTexture.GetPixels();
-        Color[] blurredPixels = new Color[pixels.Length];
+    int w = input.width;
+    int h = input.height;
+    Color[] pixels = input.GetPixels();
+    Color[] temp = new Color[pixels.Length];
+    Color[] output = new Color[pixels.Length];
 
-        for (int y = 0; y < height; y++) {
-            for (int x = 0; x < width; x++) {
-                Color sum = Color.clear;
-                int count = 0;
+    int kernelSize = radius * 2 + 1;
 
-                for (int dy = -radius; dy <= radius; dy++) {
-                    for (int dx = -radius; dx <= radius; dx++) {
-                        int nx = x + dx;
-                        int ny = y + dy;
+    for (int y = 0; y < h; y++)
+    {
+        Color sum = Color.clear;
+        int index = y * w;
 
-                        if (nx >= 0 && nx < width && ny >= 0 && ny < height) {
-                            int index = ny * width + nx;
-                            sum += pixels[index];
-                            count++;
-                        }
-                    }
-                }
-
-                int currentIndex = y * width + x;
-                blurredPixels[currentIndex] = sum / count;
-            }
+        for (int x = -radius; x <= radius; x++)
+        {
+            int clampedX = Mathf.Clamp(x, 0, w - 1);
+            sum += pixels[index + clampedX];
         }
 
-        Texture2D outputTexture = new Texture2D(width, height);
-        outputTexture.SetPixels(blurredPixels);
-        outputTexture.Apply();
-        return outputTexture;
+        temp[index] = sum / kernelSize;
+
+        for (int x = 1; x < w; x++)
+        {
+            int removeX = Mathf.Clamp(x - radius - 1, 0, w - 1);
+            int addX = Mathf.Clamp(x + radius, 0, w - 1);
+
+            sum += pixels[index + addX];
+            sum -= pixels[index + removeX];
+
+            temp[index + x] = sum / kernelSize;
+        }
     }
+
+    for (int x = 0; x < w; x++)
+    {
+        Color sum = Color.clear;
+        for (int y = -radius; y <= radius; y++)
+        {
+            int clampedY = Mathf.Clamp(y, 0, h - 1);
+            sum += temp[clampedY * w + x];
+        }
+
+        output[x] = sum / kernelSize;
+
+        for (int y = 1; y < h; y++)
+        {
+            int removeY = Mathf.Clamp(y - radius - 1, 0, h - 1);
+            int addY = Mathf.Clamp(y + radius, 0, h - 1);
+
+            sum += temp[addY * w + x];
+            sum -= temp[removeY * w + x];
+
+            output[y * w + x] = sum / kernelSize;
+        }
+    }
+
+    Texture2D blurred = new Texture2D(w, h);
+    blurred.SetPixels(output);
+    blurred.Apply();
+    return blurred;
+}
+
     
     private Texture2D ApplyGaussianBlur(Texture2D source)
     {
