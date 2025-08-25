@@ -81,11 +81,13 @@ public class Worley : MonoBehaviour
                     heightValue = Mathf.Pow(normalized, normalizationPower);
                     heightValue *= cellMaxHeight[index];
 
-                    // float distToCenter = Vector2.Distance(new Vector2(x, y), points[index]);
-                    // float maxDist = 5 * Mathf.Sqrt(textureWidth * textureWidth + textureHeight * textureHeight) / numCells;
-                    // float centerFactor = 1f - Mathf.Clamp01(distToCenter / maxDist);
+                    float distToCenter = Vector2.Distance(new Vector2(x, y), points[index]);
+                    float maxDist = Mathf.Sqrt(textureWidth * textureWidth + textureHeight * textureHeight) / (numCells * 0.3f);
+                    float centerFactor = 1f - Mathf.Clamp01(distToCenter / maxDist); 
+                    centerFactor = Mathf.Pow(centerFactor, 0.5f);
 
-                    // heightValue *= Mathf.Lerp(0.8f, 1.2f, centerFactor);
+
+                    heightValue *= Mathf.Lerp(0.8f, 1.2f, centerFactor);
                 }
                 texture.SetPixel(x, y, new Color(heightValue, heightValue, heightValue));
                 Color terrainColor = GetColorFromRegions(heightValue);
